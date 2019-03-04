@@ -1,0 +1,152 @@
+#!/bin/bash
+
+# 先打开脚本所在目录
+cd `dirname $0`
+
+###############
+#1 获取命令行参数
+###############
+build_mode=$1
+is_enable=$2
+
+# echo输出颜色，便于调试
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+yellow=$(tput setaf 3)
+blue=$(tput setaf 4)
+
+# usage Founction
+function usage()
+{
+cat << EOF
+usage: $0 options
+
+This script use to config Flutter build mode.
+${red}
+OPTIONS:
+   flutter_tools release enable          开启Release编译模式
+   flutter_tools debug enable            开启Debug编译模式
+   flutter_tools enable                  开启Debug编译模式
+   flutter_tools disable                 关闭Flutter编译模式
+${green}
+EOF
+}
+
+function clear_build_file()
+{
+    rm -f flutter_build
+    rm -f flutter_release_build
+}
+
+# enable Founction
+function enable_release()
+{
+    clear_build_file
+    touch flutter_release_build
+    echo "${yellow}已开启flutter源码release编译，请重新updat_pods!"
+}
+
+function enable_debug()
+{
+    clear_build_file
+    touch flutter_build
+    echo "${yellow}已开启flutter源码debug编译，请重新updat_pods!"
+}
+
+# disable Founction
+function disable()
+{
+    clear_build_file
+    echo "${yellow}已关闭flutter源码编译选项，请重新updat_pods!"
+}
+
+
+if [ -n "${build_mode}" ]
+then
+    if [[ "${build_mode}" == "release" ]]
+    then
+        if [[ "${is_enable}" == "enable" ]]
+        then
+            enable_release
+        elif [[ "${is_enable}" == "disable" ]]
+        then
+            disable
+        fi
+    elif [[ "${build_mode}" == "debug" ]]
+    then
+        # debug模式
+        if [[ "${is_enable}" == "enable" ]]
+        then
+        	enable_debug
+        elif [[ "${is_enable}" == "disable" ]]
+        then
+            disable
+        else
+            # usage
+            usage
+            exit 1
+        fi
+    elif [[ "${build_mode}" == "enable" ]]
+    then
+        enable_debug
+    
+    elif [[ "${build_mode}" == "disable" ]]
+    then
+        disable
+    else
+        # usage
+        usage
+        exit 1
+    fi
+else
+    # usage
+    usage
+    exit 1
+fi
+
+exit
+
+
+if [[ "${build_mode}" == "release" ]]
+then
+    # release模式
+    if [[ "${build_mode}" == "enable" ]]
+    then
+        enable_release
+    else if [[ "${build_mode}" == "disable" ]]
+    then
+        disable
+    else
+        # usage
+        usage
+        exit 1
+    fi
+
+else if [[ "${build_mode}" == "debug" ]]
+then
+    # debug模式
+    if [[ "${build_mode}" == "enable" ]]
+    then
+    	enable_debug
+    else if [[ "${build_mode}" == "disable" ]]
+    then
+        disable
+    else
+        # usage
+        usage
+        exit 1
+    fi
+    
+else if [[ "${build_mode}" == "enable" ]]
+then
+    enable_debug
+    
+else if [[ "${build_mode}" == "disable" ]]
+then
+    disable
+else
+    # usage
+    usage
+    exit 1
+fi
+ 
